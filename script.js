@@ -85,9 +85,21 @@ const GameBoard = (function () {
         return isWin;
     }
 
+    function showBoard1D () {
+        let oneD = [];
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < columns; j++) {
+                oneD.push(board[i][j]);
+            }
+        }
+
+        return oneD;
+    }
+
     const showBoard = () => console.log(board);
 
-    return {replaceSpace, showBoard, resetBoard, findWinCon};
+    return {replaceSpace, showBoard, showBoard1D, resetBoard, findWinCon};
 })();
 
 function createPlayer (name) {
@@ -178,4 +190,23 @@ const GameController = (function () {
     return {
         playTurn, playAgain
     }
+})();
+
+const ScreenController = (function () {
+    const game = GameController;
+    const boardArray = GameBoard.showBoard1D();
+
+    function renderBoard (boardArray) {
+        boardBoxes = document.querySelectorAll(`.symbol-text`);
+
+        boardBoxes.forEach((box, index) => {
+            if (typeof boardArray[index] !== `number`) {
+                box.innerText = boardArray[index];
+            } else {
+                box.innerText = ``;
+            }
+        });
+    }
+
+    renderBoard(boardArray);
 })();
