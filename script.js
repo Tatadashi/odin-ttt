@@ -150,6 +150,7 @@ const GameController = (function () {
 
     function placeMarker (spaceNumber) {
         if (board.replaceSpace(currentPlayer.name, spaceNumber)) {
+            ScreenController.renderBoard(GameBoard.showBoard1D());
             console.log(`Mark has been Placed`);
         } else {
             console.log(`Space Occupied. Please Choose Another Space`);
@@ -207,6 +208,7 @@ const ScreenController = (function () {
             }
         });
     }
-
     renderBoard(boardArray);
+
+    return {renderBoard};
 })();
