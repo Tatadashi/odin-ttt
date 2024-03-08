@@ -112,6 +112,7 @@ const GameController = function () {
 
     let gameOver = false;
     let currentPlayer = playerO;
+    let spacesLeft = 9;
 
     function displayTurnMessage () {
         const turnMessage = `Player ${currentPlayer.name}'s Turn`;
@@ -120,7 +121,6 @@ const GameController = function () {
 
     const playTurn = function (spaceNumber) {
         if (!gameOver) {
-            displayTurnMessage();
             placeMarker(spaceNumber);
         }
     };
@@ -131,13 +131,16 @@ const GameController = function () {
 
     function placeMarker (spaceNumber) {
         if (board.replaceSpace(currentPlayer.symbol, spaceNumber)) {
+            spacesLeft--;
             ScreenController.renderBoard(GameBoard.showBoard1D());
 
             checkWin(currentPlayer);
             switchPlayer();
 
-            //
-            if (!gameOver) {
+            if (spacesLeft == 0) {
+                ScreenController.renderMessage(`Draw!`);
+                gameOver = true;
+            } else if (!gameOver) {
                 displayTurnMessage();
             }
         }
@@ -157,10 +160,12 @@ const GameController = function () {
     }
 
     function playAgain () {
-        if (gameOver) {
+        if (gameOver || spacesLeft == 0) {
             board.resetBoard();
+            ScreenController.renderBoard(GameBoard.showBoard1D());
             gameOver = false;
-            
+            spacesLeft = 9;
+            displayTurnMessage();
         }
     }
 
@@ -172,6 +177,13 @@ const GameController = function () {
 const ScreenController = (function () {
     const game = GameController();
     const boardArray = GameBoard.showBoard1D();
+
+    const restartButton = document.getElementById(`restart`);
+    restartButton.addEventListener(`click`, (e) => {
+        game.playAgain();
+    });
+
+    renderBoard(boardArray);
 
     function renderBoard (boardArray) {
         boardBoxes = document.querySelectorAll(`.symbol-text`);
@@ -199,8 +211,6 @@ const ScreenController = (function () {
         gameText = document.querySelector(`#game-text`);
         gameText.innerText = `${message}`;
     }
-
-    renderBoard(boardArray);
 
     return {renderBoard, renderMessage};
 })();
