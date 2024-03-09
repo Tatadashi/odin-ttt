@@ -1,3 +1,5 @@
+//next time use pubsub, more easier to read
+
 const GameBoard = (function () {
     const board = [];
     const rows = 3;
@@ -13,6 +15,18 @@ const GameBoard = (function () {
         }
     }
     
+    function showBoard1D () {
+        let oneD = [];
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < columns; j++) {
+                oneD.push(board[i][j]);
+            }
+        }
+
+        return oneD;
+    }
+
     const replaceSpace = function (player, spaceNumber) {
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < columns; j++) {
@@ -85,18 +99,7 @@ const GameBoard = (function () {
         return isWin;
     }
 
-    function showBoard1D () {
-        let oneD = [];
-
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < columns; j++) {
-                oneD.push(board[i][j]);
-            }
-        }
-
-        return oneD;
-    }
-
+    //replace probablamatic, resetBoard problamatic,
     return {replaceSpace, showBoard1D, resetBoard, findWinCon};
 })();
 
@@ -104,9 +107,8 @@ function createPlayer (symbol) {
     return {symbol,name: symbol, score: 0};
 }
 
-const GameController = function () {
+const GameController = (function () {
     const board = GameBoard;
-
     const playerO = createPlayer(`O`);
     const playerX = createPlayer(`X`);
 
@@ -114,21 +116,17 @@ const GameController = function () {
     let currentPlayer = playerO;
     let spacesLeft = 9;
 
-    function displayTurnMessage () {
-        if (!gameOver) {
-            const turnMessage = `(${currentPlayer.symbol}) Player ${currentPlayer.name}'s Turn`;
-            ScreenController.renderMessage(`${turnMessage}`)
-        }
-    }
-
     const playTurn = function (spaceNumber) {
         if (!gameOver) {
             placeMarker(spaceNumber);
         }
     };
 
-    function switchPlayer () {
-        currentPlayer = (currentPlayer == playerO) ? playerX : playerO
+    function displayTurnMessage () {
+        if (!gameOver) {
+            const turnMessage = `(${currentPlayer.symbol}) Player ${currentPlayer.name}'s Turn`;
+            ScreenController.renderMessage(`${turnMessage}`)
+        }
     }
 
     function placeMarker (spaceNumber) {
@@ -146,6 +144,10 @@ const GameController = function () {
                 displayTurnMessage();
             }
         }
+    }
+
+    function switchPlayer () {
+        currentPlayer = (currentPlayer == playerO) ? playerX : playerO
     }
 
     function checkWin (currentPlayer) {
@@ -172,11 +174,12 @@ const GameController = function () {
         }
     }
 
+    //player def problematic, everything else fine
     return {playTurn, playAgain, playerO, playerX, displayTurnMessage}
-};
+})();
 
 const ScreenController = (function () {
-    const game = GameController();
+    const game = GameController;
     const boardArray = GameBoard.showBoard1D();
 
     renderBoard(boardArray);
@@ -222,19 +225,6 @@ const ScreenController = (function () {
         });
     })();
     
-    //changes visual of 3x3 board to match the board array in Gameboard
-    function renderBoard (boardArray) {
-        boardBoxes = document.querySelectorAll(`#board .symbol-text`);
-
-        boardBoxes.forEach((box, index) => {
-            if (typeof boardArray[index] !== `number`) {
-                box.innerText = boardArray[index];
-            } else {
-                box.innerText = ``;
-            }
-        });
-    }
-
     //add click event for playing a turn to all boxes in 3x3 board
     (function addBoxClicks () {
         boardBoxes = document.querySelectorAll(`#board .box`);
@@ -268,5 +258,19 @@ const ScreenController = (function () {
         xName.innerText = `Name: ${game.playerX.name}`
     }
 
+    //changes visual of 3x3 board to match the board array in Gameboard
+    function renderBoard (boardArray) {
+        boardBoxes = document.querySelectorAll(`#board .symbol-text`);
+
+        boardBoxes.forEach((box, index) => {
+            if (typeof boardArray[index] !== `number`) {
+                box.innerText = boardArray[index];
+            } else {
+                box.innerText = ``;
+            }
+        });
+    }
+
+    //renderMessage problamatic and maybe renderBoard
     return {renderBoard, renderMessage, renderStats};
 })();
