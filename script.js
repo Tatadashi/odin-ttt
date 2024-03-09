@@ -224,7 +224,7 @@ const ScreenController = (function () {
     
     //changes visual of 3x3 board to match the board array in Gameboard
     function renderBoard (boardArray) {
-        boardBoxes = document.querySelectorAll(`.symbol-text`);
+        boardBoxes = document.querySelectorAll(`#board .symbol-text`);
 
         boardBoxes.forEach((box, index) => {
             if (typeof boardArray[index] !== `number`) {
@@ -237,7 +237,7 @@ const ScreenController = (function () {
 
     //add click event for playing a turn to all boxes in 3x3 board
     (function addBoxClicks () {
-        boardBoxes = document.querySelectorAll(`.box`);
+        boardBoxes = document.querySelectorAll(`#board .box`);
 
         boardBoxes.forEach((box) => {
             box.addEventListener(`click`, (e) => {
