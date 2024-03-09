@@ -10,10 +10,37 @@ body {
     gap: 20px;
 }
 
+dialog {
+    margin: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+form div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
 #game-area {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
     gap: 10px;
+}
+
+.stat-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.change-name {
+    align-self: center;
 }
 
 #board {
@@ -31,8 +58,6 @@ body {
 .box {
     border: 1px solid black;
     aspect-ratio: 1/1;
-    /*border is overlapping causing extra dark lines*/
-    /*work on text in box, big size*/
 }
 
 .symbol-text {
@@ -46,4 +71,9 @@ body {
 #restart {
     font-size: 5vh;
     padding: 1vh 2vh;
+    align-self: center;
+}
+
+#change-name {
+    align-self: center;
 }

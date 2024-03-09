@@ -42,7 +42,7 @@ const GameBoard = (function () {
         let originalElementID = 0;
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < columns; j++) {
-                if (board[i][j] === player.name) {
+                if (board[i][j] === player.symbol) {
                     matches.push(originalElementID);
                 }
                 originalElementID++;
@@ -115,8 +115,10 @@ const GameController = function () {
     let spacesLeft = 9;
 
     function displayTurnMessage () {
-        const turnMessage = `Player ${currentPlayer.name}'s Turn`;
-        ScreenController.renderMessage(`${turnMessage}`)
+        if (!gameOver) {
+            const turnMessage = `(${currentPlayer.symbol}) Player ${currentPlayer.name}'s Turn`;
+            ScreenController.renderMessage(`${turnMessage}`)
+        }
     }
 
     const playTurn = function (spaceNumber) {
@@ -137,7 +139,7 @@ const GameController = function () {
             checkWin(currentPlayer);
             switchPlayer();
 
-            if (spacesLeft == 0) {
+            if (spacesLeft == 0 && !gameOver) {
                 ScreenController.renderMessage(`Draw!`);
                 gameOver = true;
             } else if (!gameOver) {
@@ -156,7 +158,8 @@ const GameController = function () {
         //winner
         gameOver = true;
         winner.score++;
-        ScreenController.renderMessage(`Player ${winner.name} Wins!`)
+        ScreenController.renderMessage(`(${winner.symbol}) Player ${winner.name} Wins!`)
+        ScreenController.renderStats();
     }
 
     function playAgain () {
@@ -169,22 +172,57 @@ const GameController = function () {
         }
     }
 
-    return {
-        playTurn, playAgain
-    }
+    return {playTurn, playAgain, playerO, playerX, displayTurnMessage}
 };
 
 const ScreenController = (function () {
     const game = GameController();
     const boardArray = GameBoard.showBoard1D();
 
-    const restartButton = document.getElementById(`restart`);
-    restartButton.addEventListener(`click`, (e) => {
-        game.playAgain();
+    renderBoard(boardArray);
+    renderStats();
+
+    const form = document.querySelector(`form`);
+    form.addEventListener(`submit`, (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const name = formData.get(`name`);
+        const player = formData.get(`player`);
+
+        changeName(player, name);
+        dialog.close();
     });
 
-    renderBoard(boardArray);
+    function changeName (player, name) {
+        if (player == game.playerO.symbol) {
+            game.playerO.name = name;
+        } else {
+            game.playerX.name = name;
+        }
+        
+        game.displayTurnMessage();
+        renderStats();
+    }
 
+    (function setButtons () {
+        const restartButton = document.getElementById(`restart`);
+        restartButton.addEventListener(`click`, (e) => {
+            game.playAgain();
+        });
+
+        const nameButton = document.getElementById(`change-name`);
+        nameButton.addEventListener(`click`, (e) => {
+            form.reset();
+            dialog.showModal();
+        });
+
+        const closeModalButton = document.getElementById(`close`);
+        closeModalButton.addEventListener(`click`, (e) => {
+            dialog.close();
+        });
+    })();
+    
+    //changes visual of 3x3 board to match the board array in Gameboard
     function renderBoard (boardArray) {
         boardBoxes = document.querySelectorAll(`.symbol-text`);
 
@@ -197,7 +235,8 @@ const ScreenController = (function () {
         });
     }
 
-    const addBoxClick = (function () {
+    //add click event for playing a turn to all boxes in 3x3 board
+    (function addBoxClicks () {
         boardBoxes = document.querySelectorAll(`.box`);
 
         boardBoxes.forEach((box) => {
@@ -207,10 +246,27 @@ const ScreenController = (function () {
         });
     })();
 
+    //changes message on top middle of screen (announce who wins/whose turn it is)
     function renderMessage (message) {
         gameText = document.querySelector(`#game-text`);
         gameText.innerText = `${message}`;
     }
 
-    return {renderBoard, renderMessage};
+    //changes stats (info on left and right of board) to match player objects created in GameController
+    function renderStats () {
+        const oStats = document.getElementById(`player-O`);
+        const xStats = document.getElementById(`player-X`);
+
+        let oScore = oStats.querySelector(`.score`);
+        oScore.innerText = `Score: ${game.playerO.score} Wins`
+        let oName = oStats.querySelector(`.name`);
+        oName.innerText = `Name: ${game.playerO.name}`
+
+        let xScore = xStats.querySelector(`.score`);
+        xScore.innerText = `Score: ${game.playerX.score} Wins`
+        let xName = xStats.querySelector(`.name`);
+        xName.innerText = `Name: ${game.playerX.name}`
+    }
+
+    return {renderBoard, renderMessage, renderStats};
 })();

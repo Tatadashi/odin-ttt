@@ -8,15 +8,39 @@
 </head>
 <body>
     <script src="./script.js" defer></script>
+    <dialog id="dialog">
+        <form>
+            <div>
+                <h2>Change Name</h2>
+                <button type="button" aria-label="close" id="close" formnovalidate>X</button>
+            </div>
+            <p>
+                <label>New Name:
+                    <input type="text" name="name" required>
+                </label>
+            </p>
+            <p>
+                <label>For Which Player
+                    <select name="player" id="player-dropdown">
+                        <option value="O">Player O</option>
+                        <option value="X">Player X</option>
+                    </select>
+                </label>
+            </p>
+            <p>
+                <button id="formSubmit" type="submit">Submit</button>
+             </p>
+        </form>
+    </dialog>
     <div>
         <h1 id="game-text">
-            Player O's Turn
+            (O) Player O's Turn
         </h1>
     </div>
     <div id="game-area">
-        <div class="player">
-            <h3>Name: O </h3>
-            <h3>Score: 5 Wins</h3>
+        <div class="stat-container" id="player-O">
+            <h3 class="name">Name: O</h3>
+            <h3 class="score">Score: 5 Wins</h3>
         </div>
         <div id="board">
             <div class="box" box-number=1>
@@ -47,13 +71,12 @@
                 <p class="symbol-text">O</p>
             </div>
         </div>
-        <div class="player">
-            <h3>Name: X </h3>
-            <h3>Score: 5 Wins</h3>
+        <div class="stat-container" id="player-X">
+            <h3 class="name">Name: X</h3>
+            <h3 class="score">Score: 5 Wins</h3>
         </div>
     </div>
-    <div id="button-area">
-        <button id="restart">Restart</button>
-    </div>
+    <button id="restart">Restart</button>
+    <button id="change-name">Change Names</button>
 </body>
 </html>
